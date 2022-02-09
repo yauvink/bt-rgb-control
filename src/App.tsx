@@ -1,12 +1,11 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import "./App.css";
+import Test from "./components/test";
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
         <p>
           Edit <code>src/App.tsx</code> and save to reload.
         </p>
@@ -18,6 +17,11 @@ function App() {
         >
           Hello world
         </a>
+        <Test
+          onClick={() => {
+            console.log("Hello TS");
+          }}
+        ></Test>
       </header>
     </div>
   );
