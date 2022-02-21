@@ -1,5 +1,39 @@
 export const SERVICE = "0000fff0-0000-1000-8000-00805f9b34fb";
 export const CHARACTERISTIC = "0000fff3-0000-1000-8000-00805f9b34fb";
+
+export type EffectsArray = Pick<
+  typeof EFFECTS,
+  | "red"
+  | "blue"
+  | "green"
+  | "cyan"
+  | "yellow"
+  | "magenta"
+  | "white"
+  | "jump_rgb"
+  | "jump_rgbycmw"
+  | "gradient_rgb"
+  | "gradient_rgbycmw"
+  | "gradient_r"
+  | "gradient_g"
+  | "gradient_b"
+  | "gradient_y"
+  | "gradient_c"
+  | "gradient_m"
+  | "gradient_w"
+  | "gradient_rg"
+  | "gradient_rb"
+  | "gradient_gb"
+  | "blink_rgbycmw"
+  | "blink_r"
+  | "blink_g"
+  | "blink_b"
+  | "blink_y"
+  | "blink_c"
+  | "blink_m"
+  | "blink_w"
+>;
+
 export const EFFECTS = {
   red: 0x80,
   blue: 0x81,
