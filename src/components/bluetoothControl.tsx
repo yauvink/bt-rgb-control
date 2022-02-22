@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Button from "@mui/material/Button";
 import Alert from "@mui/material/Alert";
-import { Select, MenuItem, Collapse, FormControl, InputLabel, Typography } from "@mui/material";
+import { Select, MenuItem, Collapse } from "@mui/material";
 import Slider from "@mui/material/Slider";
 import { HexColorPicker } from "react-colorful";
 
@@ -11,7 +11,12 @@ import {
   EFFECTS,
   EffectsArray,
 } from "../constants/bluetooth";
-import { hexToRgb } from "../utils/colors";
+import {
+  getRGBValue,
+  getEffectValue,
+  getBrightnessValue,
+  getEffectSpeedValue,
+} from "../utils/values";
 import { Box } from "@mui/system";
 
 const BluetoothControl = () => {
@@ -29,80 +34,34 @@ const BluetoothControl = () => {
   const [alertMessage, setAlertMessage] = useState<string>("");
 
   useEffect(() => {
-        console.log('use effect')
+    console.log("use effect");
     if (isConnected && char) {
-      console.log('RGB')
-      const rgbColor = hexToRgb(color);
-      const value = new Uint8Array([
-        0x7e,
-        0x00,
-        0x05,
-        0x03,
-        rgbColor?.r,
-        rgbColor?.g,
-        rgbColor?.b,
-        0x00,
-        0xef,
-      ] as any).buffer;
-      char.writeValue(value);
+      console.log("RGB");
+      char.writeValue(getRGBValue(color));
     }
   }, [color, isConnected, char]);
 
   useEffect(() => {
-    console.log('use effect')
+    console.log("use effect");
     if (isConnected && effect && char) {
-      console.log('effect')
-      const value = new Uint8Array([
-        0x7e,
-        0x00,
-        0x03,
-        `0x${effect.toString(16)}`,
-        0x03,
-        0x00,
-        0x00,
-        0x00,
-        0xef,
-      ] as any).buffer;
-      char.writeValue(value);
+      console.log("effect");
+      char.writeValue(getEffectValue(effect));
     }
   }, [effect, isConnected, char]);
 
   useEffect(() => {
-    console.log('use effect')
+    console.log("use effect");
     if (isConnected && char) {
-    console.log('brightness')
-      const value = new Uint8Array([
-        0x7e,
-        0x00,
-        0x01,
-        `0x${brightness.toString(16)}`,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0xef,
-      ] as any).buffer;
-      char.writeValue(value);
+      console.log("brightness");
+      char.writeValue(getBrightnessValue(brightness));
     }
   }, [brightness, isConnected, char]);
 
   useEffect(() => {
-    console.log('use effect')
+    console.log("use effect");
     if (isConnected && char) {
-    console.log('effectSpeed')
-      const value = new Uint8Array([
-        0x7e,
-        0x00,
-        0x02,
-        `0x${effectSpeed.toString(16)}`,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0xef,
-      ] as any).buffer;
-
-      char.writeValue(value);
+      console.log("effectSpeed");
+      char.writeValue(getEffectSpeedValue(effectSpeed));
     }
   }, [effectSpeed, isConnected, char]);
 
@@ -157,8 +116,8 @@ const BluetoothControl = () => {
 
   const onDisconnected = (event: any) => {
     setConnected(false);
-    setAlertMessage(`${event.target.name} DISCONNECTED`)
-    setAlertOpen(true)
+    setAlertMessage(`${event.target.name} DISCONNECTED`);
+    setAlertOpen(true);
   };
 
   const handleClickConnect = () => {
@@ -182,7 +141,7 @@ const BluetoothControl = () => {
         console.log(`${characteristic?.service.device.name} CONNECTED`);
         setChar(characteristic);
         setConnected(true);
-        setAlertOpen(false)
+        setAlertOpen(false);
       })
       // .then((value) => {
       //   console.log("value", value);
@@ -226,31 +185,29 @@ const BluetoothControl = () => {
         value={Number(brightness)}
         onChange={(event, value) => {
           setBrightness(value);
+          // char?.writeValue(getBrightnessValue(brightness));
         }}
       />
       <Box display="flex" justifyContent="center">
         <HexColorPicker color={color} onChange={setColor} />
       </Box>
       <hr></hr>
-        <Select
-          fullWidth
-          disabled={!isConnected}
-          value={effect || EFFECTS.red}
-          onChange={(event, value) => {
-            setEffect(event.target.value);
-          }}
-        >
-      {Object.keys(EFFECTS).map((effect, index) => {
-            return (
-              <MenuItem
-                key={index}
-                value={EFFECTS[effect as keyof EffectsArray]}
-              >
-                {effect}
-              </MenuItem>
-            );
-          })}
-        </Select>
+      <Select
+        fullWidth
+        disabled={!isConnected}
+        value={effect || EFFECTS.red}
+        onChange={(event, value) => {
+          setEffect(event.target.value);
+        }}
+      >
+        {Object.keys(EFFECTS).map((effect, index) => {
+          return (
+            <MenuItem key={index} value={EFFECTS[effect as keyof EffectsArray]}>
+              {effect}
+            </MenuItem>
+          );
+        })}
+      </Select>
       <h4>Effect Speed: {effectSpeed}</h4>
       <Slider
         aria-label="Effect speed"
