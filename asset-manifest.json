@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/bt-rgb-control/static/css/main.87b46f9c.css",
+    "main.js": "/bt-rgb-control/static/js/main.0d37bc0f.js",
+    "index.html": "/bt-rgb-control/index.html",
+    "main.87b46f9c.css.map": "/bt-rgb-control/static/css/main.87b46f9c.css.map",
+    "main.0d37bc0f.js.map": "/bt-rgb-control/static/js/main.0d37bc0f.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.87b46f9c.css",
+    "static/js/main.0d37bc0f.js"
+  ]
+}
