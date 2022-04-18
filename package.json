@@ -5,7 +5,6 @@
   "dependencies": {
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
-    "@mui/material": "^5.4.1",
     "@mui/types": "^7.1.1",
     "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/react": "^12.1.2",
@@ -17,9 +16,11 @@
     "@types/web-bluetooth": "0.0.12",
     "gh-pages": "^3.2.3",
     "react": "^17.0.2",
-    "react-colorful": "^5.5.1",
+    "react-circular-color": "^1.3.0",
     "react-dom": "^17.0.2",
     "react-scripts": "5.0.0",
+    "roundy": "^3.0.3",
+    "styled-components": "^5.3.3",
     "typescript": "^4.5.5",
     "web-vitals": "^2.1.4"
   },
@@ -49,5 +50,6 @@
       "last 1 safari version"
     ]
   },
-  "homepage": "https://yauvink.github.io/bt-rgb-control"
+  "homepage": "https://yauvink.github.io/bt-rgb-control",
+  "devDependencies": {}
 }

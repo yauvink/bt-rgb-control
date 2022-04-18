@@ -1,66 +1,52 @@
-import React, { useState, useEffect } from "react";
-import Button from "@mui/material/Button";
-import Alert from "@mui/material/Alert";
-import { Select, MenuItem, Collapse } from "@mui/material";
-import Slider from "@mui/material/Slider";
-import { HexColorPicker } from "react-colorful";
+import React, { useState, useEffect } from 'react';
+import Roundy from 'roundy';
+import CircularColor from 'react-circular-color';
 
-import {
-  SERVICE,
-  CHARACTERISTIC,
-  EFFECTS,
-  EffectsArray,
-} from "../constants/bluetooth";
-import {
-  getRGBValue,
-  getEffectValue,
-  getBrightnessValue,
-  getEffectSpeedValue,
-} from "../utils/values";
-import { Box } from "@mui/system";
+import { SERVICE, CHARACTERISTIC, EFFECTS, EffectsArray, colors } from '../constants/bluetooth';
+import { getRGBValue, getEffectValue, getBrightnessValue, getEffectSpeedValue } from '../utils/values';
+import Group10 from '../images/Group10.png';
+import Group11 from '../images/Group11.png';
 
 const BluetoothControl = () => {
   const volumeIncrease = 2;
   const [isConnected, setConnected] = useState(false);
-  const [char, setChar] = useState<
-    BluetoothRemoteGATTCharacteristic | undefined
-  >(undefined);
-  const [color, setColor] = useState("#442242");
+  const [char, setChar] = useState<BluetoothRemoteGATTCharacteristic | undefined>(undefined);
+  const [color, setColor] = useState('#00ffff');
   const [effect, setEffect] = useState<string | number | null>(null);
   const [effectSpeed, setEffectSpeed] = useState<number | number[]>(48);
   const [brightness, setBrightness] = useState<number | number[]>(100);
   const [volumeAverage, setVolumeAverage] = useState<number>(0);
-  const [alertOpen, setAlertOpen] = useState<boolean>(false);
-  const [alertMessage, setAlertMessage] = useState<string>("");
+  const [angle, setAngle] = useState<number>(0);
+  const [touchStartY, setTouchStartY] = useState<number | null>(null);
 
   useEffect(() => {
-    console.log("use effect");
+    console.log('use effect');
     if (isConnected && char) {
-      console.log("RGB");
+      console.log('RGB');
       char.writeValue(getRGBValue(color));
     }
   }, [color, isConnected, char]);
 
   useEffect(() => {
-    console.log("use effect");
+    console.log('use effect');
     if (isConnected && effect && char) {
-      console.log("effect");
+      console.log('effect');
       char.writeValue(getEffectValue(effect));
     }
   }, [effect, isConnected, char]);
 
   useEffect(() => {
-    console.log("use effect");
+    console.log('use effect');
     if (isConnected && char) {
-      console.log("brightness");
+      console.log('brightness');
       char.writeValue(getBrightnessValue(brightness));
     }
   }, [brightness, isConnected, char]);
 
   useEffect(() => {
-    console.log("use effect");
+    console.log('use effect');
     if (isConnected && char) {
-      console.log("effectSpeed");
+      console.log('effectSpeed');
       char.writeValue(getEffectSpeedValue(effectSpeed));
     }
   }, [effectSpeed, isConnected, char]);
@@ -116,8 +102,7 @@ const BluetoothControl = () => {
 
   const onDisconnected = (event: any) => {
     setConnected(false);
-    setAlertMessage(`${event.target.name} DISCONNECTED`);
-    setAlertOpen(true);
+    console.error(`${event.target.name} DISCONNECTED`);
   };
 
   const handleClickConnect = () => {
@@ -127,105 +112,140 @@ const BluetoothControl = () => {
         optionalServices: [SERVICE],
       })
       .then((device: BluetoothDevice) => {
-        console.log("device", device);
-        device.addEventListener("gattserverdisconnected", onDisconnected);
+        console.log('device', device);
+        device.addEventListener('gattserverdisconnected', onDisconnected);
         return device.gatt?.connect();
       })
       .then((server?: BluetoothRemoteGATTServer) => {
+        console.log('server', server);
         return server?.getPrimaryService(SERVICE);
       })
       .then((service?: BluetoothRemoteGATTService) => {
+        console.log('service', service);
         return service?.getCharacteristic(CHARACTERISTIC);
       })
       .then((characteristic?: BluetoothRemoteGATTCharacteristic) => {
         console.log(`${characteristic?.service.device.name} CONNECTED`);
         setChar(characteristic);
         setConnected(true);
-        setAlertOpen(false);
       })
       // .then((value) => {
       //   console.log("value", value);
       // });
       .catch((e) => {
-        setAlertMessage(String(e));
-        setAlertOpen(true);
+        console.error(String(e));
       });
+  };
+
+  const touchStart = (e: React.TouchEvent) => {
+    const touch = e.changedTouches.item(0);
+    setTouchStartY(touch.clientY);
+  };
+
+  const touchMove = (e: React.TouchEvent) => {
+    const touch = e.changedTouches.item(0);
+    if (!touchStartY) return;
+    const diff = touchStartY - touch.clientY;
+    const src = document.getElementById('colorCircle')!;
+    setAngle(angle + diff / 50);
+    src.style.transform = 'rotate(' + angle + 'deg)';
+    if (angle < 0) {
+      setColor(colors[Math.abs(Math.round(((angle - 165) % 360) / (360 / 12)))]);
+    } else {
+      setColor(colors.reverse()[Math.abs(Math.round(((angle - 165) % 360) / (360 / 12)))]);
+    }
   };
 
   return (
     <div className="bluetoothControl">
-      <Collapse in={alertOpen}>
-        <Alert
-          severity="error"
-          onClose={() => {
-            setAlertOpen(false);
+      <span className="header-text">
+        {isConnected ? `Connected device: ${char?.service.device.name}` : 'Device is not connected.'}
+      </span>
+      <div className="header-button-wrapper">
+        <button className={isConnected ? 'btn btn-connected' : 'btn btn-connect'} onClick={handleClickConnect}>
+          {isConnected ? 'Connected' : 'Connect'}
+        </button>
+        <button className={isConnected ? 'btn btn-on' : 'btn btn-off'}>{isConnected ? 'on' : 'off'}</button>
+      </div>
+      <div className="bright-label-wrapper">
+        <span className="label bright vertical">Brightness:</span>
+        <span className="amount bright vertical">{brightness}</span>
+      </div>
+      <div className="bright-slider-wrapper">
+        <div className="bright-slider">
+          <Roundy
+            value={brightness}
+            radius={210}
+            arcSize={45}
+            strokeWidth={6}
+            rotationOffset={15}
+            onChange={(value: number) => {
+              setBrightness(value);
+            }}
+          />
+        </div>
+      </div>
+      <div style={{ display: 'flex' }}>
+        <button className="central-button" style={{ backgroundColor: color }}></button>
+      </div>
+      <div className="effect-label-wrapper">
+        <span className="label effect vertical">Effect Speed:</span>
+        <span className="amount effect vertical">{effectSpeed}</span>
+      </div>
+
+      <div style={{ display: 'flex' }}>
+        <select
+          name="select"
+          className="effect-select"
+          value={effect || EFFECTS.red}
+          onChange={(event) => {
+            setEffect(Number(event.target.value));
+            console.log(event.target.value);
           }}
         >
-          {alertMessage}
-        </Alert>
-      </Collapse>
-      <h4>
-        {isConnected
-          ? `Connected device: ${char?.service.device.name}`
-          : "Device is not connected."}
-      </h4>
-      <Button
-        color={isConnected ? "success" : "error"}
-        variant={isConnected ? "contained" : "outlined"}
-        onClick={handleClickConnect}
-        style={{ fontSize: "22px" }}
-      >
-        {isConnected ? "Connected!" : "Connect"}
-      </Button>
-      <hr></hr>
-      <h4>Brightness: {brightness}</h4>
-      <Slider
-        aria-label="Brightness"
-        disabled={!isConnected}
-        value={Number(brightness)}
-        onChange={(event, value) => {
-          setBrightness(value);
-          // char?.writeValue(getBrightnessValue(brightness));
-        }}
-      />
-      <Box display="flex" justifyContent="center">
-        <HexColorPicker color={color} onChange={setColor} />
-      </Box>
-      <hr></hr>
-      <Select
-        fullWidth
-        disabled={!isConnected}
-        value={effect || EFFECTS.red}
-        onChange={(event, value) => {
-          setEffect(event.target.value);
-        }}
-      >
-        {Object.keys(EFFECTS).map((effect, index) => {
-          return (
-            <MenuItem key={index} value={EFFECTS[effect as keyof EffectsArray]}>
-              {effect}
-            </MenuItem>
-          );
-        })}
-      </Select>
-      <h4>Effect Speed: {effectSpeed}</h4>
-      <Slider
-        aria-label="Effect speed"
-        disabled={!isConnected}
-        value={Number(effectSpeed)}
-        onChange={(event, value) => {
-          setEffectSpeed(value);
-        }}
-      />
-      <hr></hr>
-      <Button variant="contained" disabled onClick={handleListenMusicClick}>
+          {Object.keys(EFFECTS).map((effect, index) => {
+            return (
+              <option key={index} value={EFFECTS[effect as keyof EffectsArray]}>
+                {' '}
+                {effect.toUpperCase()}
+              </option>
+            );
+          })}
+        </select>
+      </div>
+      <div className="effect-slider-wrapper">
+        <div className="effect-slider">
+          <Roundy
+            value={effectSpeed}
+            radius={210}
+            arcSize={45}
+            strokeWidth={6}
+            rotationOffset={-60}
+            onChange={(value: number) => {
+              setEffectSpeed(value);
+            }}
+          />
+        </div>
+      </div>
+      <div className="color-picker-wrapper" id="colorCircle" onTouchStart={touchStart} onTouchMove={touchMove}>
+        <CircularColor
+          numberOfSectors={12}
+          color={color}
+          onChange={setColor}
+          size={420}
+          renderHandle={() => {
+            return <svg></svg>;
+          }}
+        ></CircularColor>
+      </div>
+
+      <img src={Group10} alt="musicBg"></img>
+      <img style={{ position: 'absolute', top: '490px', left: '0px' }} src={Group11} alt="musicBg"></img>
+
+      <button disabled onClick={handleListenMusicClick}>
         LISTEN MUSIC
-      </Button>
-      <Slider
-        aria-label="test"
-        color={"secondary"}
-        value={volumeAverage * volumeIncrease}
-      />
+      </button>
+      {/* <Slider aria-label="test" color={'secondary'} value={volumeAverage * volumeIncrease} /> */}
     </div>
   );
 };

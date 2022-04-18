@@ -1,6 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,600;1,538;1,800&family=Skranji&display=swap');
+
+:root {
+  --green: #2C951B;
+  --orange: #F17A54;
+  --yellow: #F1E78C;
+  --light-blue: #8CD9F1;
+  --blue: #3F6297;
+  --purple: #7C3ECB;
+  --purple2: #D1B3F8;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --background-color: #E6F4F9;
+    --header-text: #374E71;
+    --select-color: var(--light-blue);
+    --bright-label: var(--blue);
+    --effect-label: var(--purple);
+  }
+
+  /* .App {color: green; background: #333;} */
+}
+
+@media (prefers-color-scheme: dark) {
+
+  /* .App {color: red; background: #333;} */
+  :root {
+    --background-color: #1F2124;
+    --header-text: #F1B254;
+    --select-color: var(--yellow);
+    --bright-label: var(--yellow);
+    --effect-label: var(--light-blue);
+  }
+}
+
 .App {
   text-align: center;
-  background-color: #282c34;
+  background-color: var(--background-color);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -8,8 +44,194 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+  /*  delete */
+  font-family: 'Open Sans', sans-serif;
+  font-family: 'Skranji', cursive;
 }
 
 .bluetoothControl {
-  width: 400px;
+  width: 375px;
+  position: absolute;
+  top: 0px;
+  overflow: hidden;
+}
+
+
+/*  ==================== */
+
+.header-text {
+  color: var(--header-text);
+  font-size: 16px;
+}
+
+.header-button-wrapper {
+  display: flex;
+  justify-content: space-between;
+  margin: 15px 25px 18px 20px;
+}
+
+.btn {
+  border-radius: 2px;
+  background-color: transparent;
+  font-size: 14px;
+  font-weight: 400;
+  text-transform: uppercase;
+  font-family: "Skranji" !important;
+  cursor: pointer;
+  height: 30px;
+}
+
+.btn-connected {
+  color: var(--green);
+  border: 0px;
+  text-decoration: underline;
+}
+
+.btn-connect {
+  color: var(--orange);
+  border: 0px;
+  text-decoration: underline;
+}
+
+.btn-on {
+  color: var(--green);
+  border: 1px solid var(--green);
+  width: 56px;
+  margin-right: 10px;
+}
+
+.btn-off {
+  color: var(--orange);
+  border: 1px solid var(--orange);
+  width: 56px;
+  margin-right: 10px;
+}
+
+.central-button {
+  margin: 132px 21px;
+  transform: perspective(150px) rotateY(70deg);
+  height: 20px;
+  width: 200px;
+  border-width: 0;
+  border-radius: 2px;
+}
+
+.effect-select {
+  border: 1px solid var(--effect-label);
+  border-radius: 2px;
+  width: 110px;
+  height: 30px;
+  font-family: 'Skranji' !important;
+  margin-left: 26px;
+  background-color: transparent;
+  color: var(--effect-label);
+  cursor: pointer;
+}
+
+.bright-label-wrapper {
+  margin-left: 20px;
+}
+
+.effect-label-wrapper {
+  margin-left: 20px;
+  margin-top: -8px;
+}
+
+.label {
+  font-size: 12px;
+  padding-right: 2px;
+  padding-left: 5px;
+}
+
+.amount {
+  font-size: 40px;
+}
+
+.bright,
+#bright-slider {
+  color: var(--bright-label)
+}
+
+.bright-slider div svg path {
+  stroke: var(--bright-label)
+}
+
+.effect,
+#effect-slider {
+  color: var(--effect-label)
+}
+
+.effect-slider div svg path {
+  stroke: var(--effect-label)
+}
+
+.bright-slider-wrapper {
+  height: 190px;
+  width: 170px;
+  position: absolute;
+  left: 80px;
+  top: 90px;
+  overflow: hidden;
+}
+
+.bright-slider {
+  position: absolute;
+  top: -8px;
+  left: 33px;
+}
+
+.effect-slider-wrapper {
+  height: 195px;
+  width: 170px;
+  position: absolute;
+  top: 315px;
+  left: 80px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.effect-slider {
+  position: absolute;
+  top: -229px;
+  left: 33px;
+}
+
+.vertical {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.color-picker-wrapper{
+  position: absolute;
+  top: 80px;
+  left: 152px;
+  /* border: 1px solid red; */
+  border-radius: 50%;
+  overflow: hidden;
+  height: 420px;
+  width: 420px;
+  filter: brightness(0.8);
+}
+
+
+/*  overrides */
+.bright-slider .sliderHandle::after {
+  border: 9px solid var(--header-text) !important;
+  background: var(--background-color) !important;
+  right: -15px !important;
+  width: 10px !important;
+  height: 10px !important;
+}
+
+.effect-slider .sliderHandle::after {
+  border: 9px solid var(--effect-label) !important;
+  background: var(--background-color) !important;
+  right: -10px !important;
+  width: 10px !important;
+  height: 10px !important;
+}
+
+.MuiSelect-select,
+.MuiSvgIcon-root {
+  color: var(--select-color) !important
 }
