@@ -149,10 +149,15 @@ const BluetoothControl = () => {
     const src = document.getElementById('colorCircle')!;
     setAngle(angle + diff / 50);
     src.style.transform = 'rotate(' + angle + 'deg)';
+    const index = Math.abs(Math.round(((angle - 165) % 360) / (360 / 12)));
     if (angle < 0) {
-      setColor(colors[Math.abs(Math.round(((angle - 165) % 360) / (360 / 12)))]);
+      if (color !== colors[index]) {
+        setColor(colors[index]);
+      }
     } else {
-      setColor(colors.reverse()[Math.abs(Math.round(((angle - 165) % 360) / (360 / 12)))]);
+      if (color !== colors.reverse()[index]) {
+        setColor(colors.reverse()[index]);
+      }
     }
   };
 
